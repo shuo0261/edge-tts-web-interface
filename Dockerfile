@@ -21,5 +21,5 @@ RUN mkdir -p /app/tts
 # 暴露端口2024
 EXPOSE 2024
 
-# 运行app.py
-CMD ["python", "app.py"]
+# 运行tts_app.py
+CMD ["python", "tts_app.py"]
