@@ -10,7 +10,7 @@ COPY . /app
 # 安装所需的包
 RUN pip install --no-cache-dir flask edge-tts
 
-# 安装系统依赖（如果edge-tts需要的话）
+# 安装系统依赖
 RUN apt-get update && apt-get install -y \
     # 在这里添加所需的系统包
     && rm -rf /var/lib/apt/lists/*
