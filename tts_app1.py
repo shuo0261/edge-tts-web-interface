@@ -3,7 +3,7 @@ import re
 import logging
 import subprocess
 import shlex
-from flask import Flask, request, render_template_string, jsonify, url_for, send_from_directory
+from flask import Flask, request, render_template_string, jsonify, send_file, url_for, send_from_directory
 from io import StringIO
 
 print("服务器正在运行，请访问：http://127.0.0.1:2024")
@@ -53,12 +53,8 @@ def createAudio(text, file_path, voiceId):
 
     logger.debug(f"File path: {file_path}")
 
-    # 删除旧的音频文件 仅保留最新的音频文件 默认保留在同级目录tts文件夹内
-    for filename in os.listdir(app.config['TTS_FOLDER']):
-        if filename.endswith(".mp3"):
-            os.remove(os.path.join(app.config['TTS_FOLDER'], filename))
-
-    command = ["edge-tts", "--voice", str(voice), "--text",
+# 这个会保留所有生成的音频文件，默认保留在同级目录tts文件夹内
+    command = ["edge-tts", "--voice", str(voice), "--text", 
                str(new_text), "--write-media", str(file_path)]
     logger.debug(f"Running command: {' '.join(map(shlex.quote, command))}")
 
@@ -105,7 +101,7 @@ def index():
             return jsonify(result="success", file_url=file_url, console=logs)
         else:
             return jsonify(result=f"音频生成失败: {result}", console=logs)
-        
+
     html = '''
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -272,7 +268,6 @@ def index():
 </body>
 </html>
 '''
-
     return render_template_string(html, voiceMap=voiceMap)
 
 @app.route('/download/<filename>')
@@ -280,4 +275,5 @@ def download_file(filename):
     return send_from_directory(app.config['TTS_FOLDER'], filename, as_attachment=True)
 
 if __name__ == "__main__":
+    # app.run(port=2024, host="127.0.0.1", debug=True)
     app.run(port=2024, host="0.0.0.0", debug=True)
