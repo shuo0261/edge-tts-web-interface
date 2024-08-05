@@ -16,7 +16,7 @@
 
 1. 克隆仓库：
 ```
-git clone https://github.com/yourusername/edge-tts-web-interface.git
+git clone https://github.com/shuo0261/edge-tts-web-interface.git
 ```
 2. 进入项目目录：
 ```
@@ -36,7 +36,7 @@ python tts_app.py
 
 1. 克隆仓库：
 ```
-git clone https://github.com/yourusername/edge-tts-web-interface.git
+git clone https://github.com/shuo0261/edge-tts-web-interface.git
 ```
 2. 进入项目目录：
 ```
