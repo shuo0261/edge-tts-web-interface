@@ -53,6 +53,7 @@ def createAudio(text, file_path, voiceId):
 
     logger.debug(f"File path: {file_path}")
 
+# 这个会保留所有生成的音频文件，默认保留在同级目录tts文件夹内
     command = ["edge-tts", "--voice", str(voice), "--text", 
                str(new_text), "--write-media", str(file_path)]
     logger.debug(f"Running command: {' '.join(map(shlex.quote, command))}")

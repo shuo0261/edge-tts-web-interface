@@ -53,7 +53,7 @@ def createAudio(text, file_path, voiceId):
 
     logger.debug(f"File path: {file_path}")
 
-    # 删除旧的音频文件
+    # 删除旧的音频文件 仅保留最新的音频文件 默认保留在同级目录tts文件夹内
     for filename in os.listdir(app.config['TTS_FOLDER']):
         if filename.endswith(".mp3"):
             os.remove(os.path.join(app.config['TTS_FOLDER'], filename))
