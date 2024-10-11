@@ -101,7 +101,7 @@ def index():
         logs = log_stream.read()
 
         if result == "success":
-            file_url = url_for('download_file', filename=f"{file_name}.mp3", _external=True,_scheme='https')
+            file_url = url_for('download_file', filename=f"{file_name}.mp3", _external=True, _scheme='https')
             return jsonify(result="success", file_url=file_url, console=logs)
         else:
             return jsonify(result=f"音频生成失败: {result}", console=logs)
