@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字转语音工具</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="content container">
+        <div class="text-center">
+            <h1 class="mb-4">文字转语音工具</h1>
+        </div>
+        <div class="form-container">
+            <form id="tts-form" method="POST" onsubmit="submitForm(event)">
+                <div class="mb-3">
+                    <label for="text" class="form-label"><i class="fas fa-align-left me-2"></i>要转换的文字：</label>
+                    <textarea name="text" id="text" class="form-control" rows="4" placeholder="请输入要转换为语音的文本内容..." required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="file_name" class="form-label"><i class="fas fa-file-audio me-2"></i>文件名（不含扩展名）：</label>
+                    <input type="text" name="file_name" id="file_name" class="form-control" placeholder="生成文件的名称" required>
+                </div>
+                <div class="mb-3">
+                    <label for="voice" class="form-label"><i class="fas fa-microphone me-2"></i>选择语音：</label>
+                    <select name="voice" id="voice" class="form-select" required>
+                        {% for voice_id, voice_name in voiceMap.items() %}
+                        <option value="{{ voice_id }}">{{ voice_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-play me-2"></i>生成语音
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="previewAudio()">
+                        <i class="fas fa-headphones me-2"></i>预览语音
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="result" class="alert" role="alert" style="display: none;">
+            <div class="loading">
+                <div></div><div></div><div></div><div></div>
+            </div>
+            <span id="result-text">音频生成中...</span>
+        </div>
+        
+        <div id="console-section" style="display: none;">
+            <div class="section-title"><i class="fas fa-terminal me-2"></i>处理日志</div>
+            <div id="console" class="mb-4" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+        
+        <div id="audio-player" style="display:none;">
+            <div class="section-title"><i class="fas fa-music me-2"></i>语音预览</div>
+            <audio controls>
+                <source src="#" type="audio/mpeg">
+                你的浏览器不支持音频播放。
+            </audio>
+            <div class="text-center">
+                <a id="download-link" href="#" download="generated_audio.mp3" class="download-btn">
+                    <i class="fas fa-download me-2"></i>下载音频
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center py-3">
+        <p class="mb-0">© 2024 MOML TTS. All rights reserved.</p>
+    </footer>
+    
+    <button id="theme-toggle" class="btn" title="切换主题">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
