@@ -8,16 +8,13 @@ from io import StringIO
 
 app = Flask(__name__)
 
-# 配置音频存储目录
 app.config['TTS_FOLDER'] = 'tts'
 os.makedirs(app.config['TTS_FOLDER'], exist_ok=True)
 
-# 配置日志
 log_stream = StringIO()
 logging.basicConfig(level=logging.DEBUG, stream=log_stream)
 logger = logging.getLogger(__name__)
 
-# 语音映射表
 voiceMap = {
     "xiaoxiao": "zh-CN-XiaoxiaoNeural",
     "xiaoyi": "zh-CN-XiaoyiNeural",
@@ -90,7 +87,9 @@ def index():
         logs = log_stream.read()
 
         if result == "success":
-            file_url = url_for('download_file', filename=f"{file_name}.mp3", external=True, scheme='https')
+            # 使用 request.host_url 动态生成完整 URL
+            base_url = request.host_url.rstrip('/')
+            file_url = f"{base_url}{url_for('download_file', filename=f'{file_name}.mp3')}"
             return jsonify(result="success", file_url=file_url, console=logs)
         else:
             return jsonify(result=f"音频生成失败: {result}", console=logs)
@@ -109,8 +108,12 @@ def api_tts():
     voice = data.get('voice')
     file_path = os.path.join(app.config['TTS_FOLDER'], f"{file_name}.mp3")
     result = createAudio(text, file_path, voice)
+    
     if result == "success":
-        return jsonify({"status": "success", "file_url": url_for('download_file', filename=f"{file_name}.mp3", external=True)})
+        # 使用 request.host_url 动态生成完整 URL
+        base_url = request.host_url.rstrip('/')
+        file_url = f"{base_url}{url_for('download_file', filename=f'{file_name}.mp3')}"
+        return jsonify({"status": "success", "file_url": file_url})
     return jsonify({"status": "error", "message": result}), 400
 
 if __name__ == "__main__":
