@@ -1,5 +1,9 @@
 # Edge TTS Web Interface
 
+ **[中文](README.md)**  | **[English](README.en.md)** 
+
+---
+
 这是一个基于Flask的Web应用，使用Microsoft Edge的文本转语音（TTS）引擎来生成音频文件。
 
 ## 功能
@@ -69,6 +73,10 @@ docker run -d -p 2024:2024 -v /path/on/host:/app/tts --name edge-tts-web edge-tt
     "file_name": "test",
     "voice": "amy"
 }
+```
+- 返回格式
+```json
+
 ```
 
 
