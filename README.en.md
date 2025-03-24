@@ -1,132 +1,203 @@
-根据您的请求，以下是根据中文文档翻译并调整后的完整英文版 README 文件，适用于英文用户，帮助他们清晰地理解和使用该应用。
-
----
-
 # Edge TTS Web Interface
 
 **[中文](README.md)** | **[English](README.en.md)**
 
 ---
 
-This is a Flask-based web application that leverages Microsoft Edge's Text-to-Speech (TTS) engine to generate audio files from text input.
+This is a Flask-based web application that uses Microsoft Edge's Text-to-Speech (TTS) engine to generate audio files and also supports Speech-to-Text (STT) functionality.
 
 ## Features
 
-- Convert text to speech
-- Support for multiple languages (e.g., Chinese [Mandarin, Cantonese, Taiwanese], English, Japanese, etc.)
-- Real-time log display
-- Audio file preview, online playback, and download
-- Automatic cleanup of old files, retaining only the latest generated audio
-- API support for generating audio via POST requests
-- **Support for switching between Chinese and English languages**
-- **Support for dark mode**
+- **Text-to-Speech (TTS)**:
+  - Convert text into speech
+  - Support for multiple languages (Chinese [including Mandarin, Cantonese, and Taiwanese], English, Japanese, Spanish, etc.)
+  - Support for customizing speech parameters (such as speaking rate, pitch, volume)
+  - Support for SSML input
+  - Generated audio supports multiple formats (MP3 by default, can be converted to WAV, etc.)
+  - Option to generate subtitle files (in SRT format)
+  - Real-time log display
+  - Audio files support preview, online playback, and download
+  - Automatically clean up old files, only keeping the latest generated audio and subtitles
+  - Support generating audio through the API interface (`/api/tts`)
+
+- **Speech-to-Text (STT)**:
+  - Support uploading audio files and converting them into text (based on the Vosk model)
+  - Requires the audio to be in mono 16kHz WAV format (non-WAV files will be automatically converted)
+
+- **Interface Features**:
+  - Support for switching between Chinese and English
+  - Support for dark mode
 
 ## Installation and Running
 
-### Local Setup
+### Prerequisites
 
-1. **Clone the repository**:
+- **FFmpeg**: Used for audio processing and format conversion. The code will automatically detect and attempt to install it (for Linux, macOS, Windows).
+- **Vosk Model**: Used for the STT functionality. You need to manually download `vosk-model-small-cn-0.22.zip` and extract it to the `vosk-model-small-cn-0.22` folder in the root directory of the project.
+  - Download address: `https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip`
+
+### Running Locally
+
+1. Clone the repository:
    ```sh
    git clone https://github.com/shuo0261/edge-tts-web-interface.git
    ```
-2. **Navigate to the project directory**:
+2. Navigate to the project directory:
    ```sh
    cd edge-tts-web-interface
    ```
-3. **Install dependencies**:
+3. Install dependencies:
    ```sh
    python -m pip install --upgrade pip
    pip install -r requirements.txt --no-cache-dir
    ```
-4. **Run the application**:
+4. Download and extract the Vosk model to the `vosk-model-small-cn-0.22` folder.
+5. Run the application:
    ```sh
    python app.py
    ```
-5. **Access the app**:
-   Open your browser and visit `http://localhost:2024`.
+6. Access `http://localhost:2024` in your browser.
 
 ### Docker Deployment
 
-1. **Clone the repository**:
+1. Clone the repository:
    ```sh
    git clone https://github.com/shuo0261/edge-tts-web-interface.git
    ```
-2. **Navigate to the project directory**:
+2. Navigate to the project directory:
    ```sh
    cd edge-tts-web-interface
    ```
-3. **Build the Docker image**:
+3. Build the Docker image:
    ```dockerfile
    docker build -t edge-tts-web .
    ```
-4. **Run the Docker container**:
+4. Run the Docker container:
    ```dockerfile
    docker run -d -p 2024:2024 --name edge-tts-web edge-tts-web
    ```
-5. **Access the app**:
-   Open your browser and visit `http://localhost:2024`.
+5. Access `http://localhost:2024` in your browser.
 
-   **Note**: To save generated audio files to your host machine, use volume mounting:
+**Note**: If you want to save the generated audio files to the host machine, you can use volume mounting:
    ```dockerfile
    docker run -d -p 2024:2024 -v /path/on/host:/app/tts --name edge-tts-web edge-tts-web
    ```
-   Replace `/path/on/host` with your desired host directory.
+   Replace `/path/on/host` with the path on your host machine where you want to save the files.
 
 ## Usage
 
-### API Request
+### API Interface Requests
 
-- **Endpoint**: Send a POST request to `/api/tts`.
-- **Example Request**:
+#### `/api/tts` - Text-to-Speech
+- **Method**: POST
+- **Request Format**: JSON
+- **Example**:
   ```json
   {
-      "text": "Hello world",
+      "text": "Hello, world",
       "file_name": "test",
-      "voice": "amy"
+      "voice": "amy",
+      "output_format": "mp3"
   }
   ```
-- **Response Format**:
-  ```json
-  {
-      "result": "success",
-      "console": "Log content",
-      "file_url": "http://localhost:2024/download/test.mp3"
-  }
-  ```
+- **Parameter Explanation**:
+  - `text` (Required): The text to be converted
+  - `file_name` (Optional): The output file name (default is `output`)
+  - `voice` (Optional): The type of voice (default is `xiaoxiao`, see the supported voices list below)
+  - `output_format` (Optional): The output audio format (default is `mp3`)
+- **Return Format**:
+  - Success:
+    ```json
+    {
+        "result": "success",
+        "file_url": "http://localhost:2024/download/test.mp3"
+    }
+    ```
+  - Failure:
+    ```json
+    {
+        "result": "error",
+        "message": "Error message"
+    }
+    ```
+
+#### `/stt` - Speech-to-Text
+- **Method**: POST
+- **Request Format**: multipart/form-data, with the uploaded field named `audio_file`
+- **Requirement**: The audio file must be in mono 16kHz WAV format (other formats will be automatically converted)
+- **Return Format**:
+  - Success:
+    ```json
+    {
+        "result": "success",
+        "transcription": "Transcribed text",
+        "console": "Log content"
+    }
+    ```
+  - Failure:
+    ```json
+    {
+        "result": "error",
+        "message": "Error message",
+        "console": "Log content"
+    }
+    ```
 
 ### Web Usage
 
-1. **Input Text**: Enter the text you want to convert into speech in the provided text box.
-2. **Select Voice**: Choose a voice from the available options.
-3. **Specify File Name**: Enter a file name (without an extension).
-4. **Generate Audio**: Click the "Generate Speech" button.
-5. **Wait**: Allow a moment for the audio to be generated.
-6. **Play or Download**: Use the built-in player to listen to the audio or download the file.
-7. **Preview**: Click "Preview Speech" to hear the first 50 characters of your text.
+1. **Text-to-Speech**:
+   - Enter the text to be converted in the text box (supports uploading `.txt` files)
+   - Select the voice (such as `xiaoxiao`)
+   - Enter the file name (without the extension)
+   - Optional: Adjust the speaking rate (`rate`), pitch (`pitch`), volume (`volume`), or enter SSML
+   - Optional: Check the box to generate subtitles (SRT)
+   - Click the "Generate Speech" button
+   - After generation is complete, you can play or download the audio file
 
-### Language Switching
+2. **Speech-to-Text**:
+   - Upload the audio file to the `/stt` page
+   - Wait for the processing to complete and view the conversion result
 
-- **How to Switch**: Click the language toggle button in the upper right corner (displayed as Chinese or English icons) to switch the interface between Chinese and English.
+### List of Supported Voices
+| ID         | Voice Name                  | Language       |
+|------------|-----------------------------|----------------|
+| xiaoxiao   | zh-CN-XiaoxiaoNeural        | Chinese (Mandarin) |
+| xiaoyi     | zh-CN-XiaoyiNeural          | Chinese (Mandarin) |
+| yunjian    | zh-CN-YunjianNeural         | Chinese (Mandarin) |
+| yunxi      | zh-CN-YunxiNeural           | Chinese (Mandarin) |
+| yunxia     | zh-CN-YunxiaNeural          | Chinese (Mandarin) |
+| yunyang    | zh-CN-YunyangNeural         | Chinese (Mandarin) |
+| xiaobei    | zh-CN-liaoning-XiaobeiNeural | Chinese (Liaoning dialect) |
+| xiaoni     | zh-CN-shaanxi-XiaoniNeural   | Chinese (Shaanxi dialect) |
+| hiugaai    | zh-HK-HiuGaaiNeural         | Chinese (Cantonese) |
+| hiumaan    | zh-HK-HiuMaanNeural         | Chinese (Cantonese) |
+| wanlung    | zh-HK-WanLungNeural         | Chinese (Cantonese) |
+| hsiaochen  | zh-TW-HsiaoChenNeural       | Chinese (Taiwanese) |
+| hsioayu    | zh-TW-HsiaoYuNeural         | Chinese (Taiwanese) |
+| yunjhe     | zh-TW-YunJheNeural          | Chinese (Taiwanese) |
+| amy        | en-US-AmyNeural             | English        |
+| nanami     | ja-JP-NanamiNeural          | Japanese       |
+| luna       | es-ES-LunaNeural            | Spanish        |
+
+### Switching between Chinese and English
+- Click the language switch button in the upper right corner (Chinese or English icon) to switch the page language.
 
 ### Dark Mode
-
-- **How to Toggle**: Click the theme switch button in the upper right corner (displayed as sun or moon icons) to switch between light and dark modes.
+- Click the theme switch button in the upper right corner (sun or moon icon) to switch between dark and light modes.
 
 ## Dependencies
 
-- **Flask**: Web framework for the application
-- **edge-tts**: Microsoft Edge's Text-to-Speech library
-- **FFmpeg**:Multimedia framework for handling audio and video streams and files
-- **vosk**:Offline speech recognition library powered by Kaldi
+- Flask
+- edge-tts
+- FFmpeg
+- vosk
+- werkzeug
+- requests
 
 ## Contribution
 
-We welcome contributions! Feel free to submit issues or pull requests. For significant changes, please open an issue first to discuss your ideas.
+You are welcome to submit issues and pull requests. For major changes, please open an issue to discuss what you want to change first.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-这份英文文档完整地描述了项目的功能、安装方法、使用说明以及语言切换和暗色模式的操作步骤，确保用户能够轻松上手并充分利用该应用。
+This project is licensed under the MIT license - for details, please see the [LICENSE](LICENSE) file. 
