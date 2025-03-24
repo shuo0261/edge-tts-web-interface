@@ -259,6 +259,24 @@ def index():
 
     return render_template('index.html', voiceMap=voiceMap)
 
+@app.route('/api/tts', methods=['POST'])
+def tts():
+    data = request.get_json()
+    text = data.get('text', '')
+    file_name = data.get('file_name', 'output')
+    voice = data.get('voice', 'xiaoxiao')
+    output_format = data.get('output_format', 'mp3')
+
+    file_name = secure_filename(file_name)
+    file_path = os.path.join(app.config['TTS_FOLDER'], f"{file_name}.{output_format}")
+    result, final_file = createAudio(text, file_path, voice)
+    
+    if result == "success":
+        file_url = url_for('download_file', filename=os.path.basename(final_file), _external=True)
+        return jsonify({"result": "success", "file_url": file_url})
+    else:
+        return jsonify({"result": "error", "message": result}), 500
+
 @app.route('/stt', methods=['POST'])
 def stt():
     if 'audio_file' not in request.files:
