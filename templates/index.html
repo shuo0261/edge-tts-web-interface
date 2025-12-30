@@ -1,226 +1,239 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>文字转语音 & 语音转文字工具</title>
-		<link rel="shortcut icon" type="image/x-icon" href="../static/favicon.ico">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-		<link href="./static/css/script.css" rel="stylesheet">
-	</head>
-	<body>
-		<!-- 表头 -->
-		<div class="header" style="margin: 0;">
-			<div class="container text-center">
-				<h1 class="mb-2"><i class="fas fa-exchange-alt me-3"></i>文字转语音 & 语音转文字工具</h1>
-				<p class="lead mb-0">简单高效的语音与文字转换解决方案</p>
-			</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文字转语音 & 语音转文字工具</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="./static/css/script.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-light fixed-top glass-effect">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-wave-square me-2 text-primary"></i>MOML Voice
+            </a>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-btn-wrapper" id="lang-toggle" title="Switch Language">
+                    <span class="lang-text fw-bold" id="current-lang-display">CN</span>
+                    <img src="static/img/cn-light.png" id="cn-light" class="d-none" />
+                    <img src="static/img/en-light.png" id="en-light" class="d-none" />
+                    <img src="static/img/cn-dark.png" id="cn-dark" class="d-none" />
+                    <img src="static/img/en-dark.png" id="en-dark" class="d-none" />
+                </div>
 
-		</div>
+                <div class="icon-btn-wrapper" id="checkbox" title="Toggle Theme">
+                    <i class="fas fa-sun" id="sun-display"></i>
+                    <i class="fas fa-moon" id="moon-display" style="display: none;"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-		<!-- 表单 -->
-		<div class="container">
-			<div style="margin: 10px 0;display: flex;justify-content: end;">
-				<div style="width: 30px;height: 30px;cursor: pointer;">
-					<img src="static/img/cn-light.png" alt="" style="width: 100%;height: 100%;" id="cn-light"
-						class="hide" />
-					<img src="static/img/en-light.png" alt="" style="width: 100%;height: 100%;" id="en-light"
-						class="show" />
-					<img src="static/img/cn-dark.png" alt="" style="width: 100%;height: 100%;display: none;" id="cn-dark"
-						class="hide" />
-					<img src="static/img/en-dark.png" alt="" style="width: 100%;height: 100%;display: none;" id="en-dark"
-						class="show" />
-				</div>
-				<div style="width: 30px;height: 30px;line-height: 30px; cursor: pointer; margin-left: 20px; transform: scale(1.5);" id="checkbox">
-				    <i class="fas fa-sun" id="sun-display"></i>
-				    <i class="fas fa-moon" id="moon-display" style="display: none;"></i>
-				</div>
-				<span class="theme-text"></span>
-			</div>
-			
-			<!-- TTS 部分 -->
-			<div class="form-container">
-				<div class="feature-heading1">
-					<div class="feature-icon">
-						<i class="fas fa-play"></i>
-					</div>
-					<h3 class="mb-0">文字转语音</h3>
-				</div>
+    <div class="main-wrapper">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8 col-xl-7">
+                    
+                    <div class="text-center mb-4 mt-3">
+                        <h1 class="h3 fw-bold gradient-text mb-2">语音与文字转换工具</h1>
+                        <p class="text-muted small">简单、高效、本地化的 AI 语音解决方案</p>
+                    </div>
 
-				<form id="tts-form" method="POST" enctype="multipart/form-data" onsubmit="submitForm(event)">
-					<div class="mb-3">
-						<label for="text" class="form-label"><i class="fas fa-align-left me-2"></i>要转换的文字：</label>
-						<textarea name="text" id="text" class="form-control" rows="4"
-							placeholder="请输入要转换为语音的文本内容..."></textarea>
-					</div>
-					
-					<div class="mb-3">
-						<label for="text_file" class="form-label"><i class="fas fa-upload me-2"></i>上传文本文件（可选）：</label>
-						<input type="file" name="text_file" id="text_file" class="form-control" accept=".txt">
-					</div>
+                    <div class="card main-card shadow-lg border-0">
+                        <div class="card-header bg-transparent border-bottom-0 p-2">
+                            <ul class="nav nav-pills nav-fill p-1 bg-secondary-subtle rounded-3" id="pills-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-3 fw-bold small py-2" id="pills-tts-tab" data-bs-toggle="pill" data-bs-target="#pills-tts" type="button" role="tab">
+                                        <i class="fas fa-play me-2"></i><span id="tab-tts-text">文字转语音</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-3 fw-bold small py-2" id="pills-stt-tab" data-bs-toggle="pill" data-bs-target="#pills-stt" type="button" role="tab">
+                                        <i class="fas fa-microphone me-2"></i><span id="tab-stt-text">语音转文字</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
 
-					<div class="row">
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="file_name" class="form-label"><i
-										class="fas fa-file-audio me-2"></i>文件名（不含扩展名）：</label>
-								<input type="text" name="file_name" id="file_name" class="form-control"
-									placeholder="生成文件的名称" required>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="voice" class="form-label"><i
-										class="fas fa-microphone me-2"></i>选择语音：</label>
-								<select name="voice" id="voice" class="form-select" required>
-									{% for voice_id, voice_name in voiceMap.items() %}
-									<option value="{{ voice_id }}">{{ voice_name }}</option>
-									{% endfor %}
-								</select>
-							</div>
-						</div>
-					</div>
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="pills-tabContent">
+                                
+                                <div class="tab-pane fade show active" id="pills-tts" role="tabpanel">
+                                    <form id="tts-form" method="POST" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                                        <div class="mb-4">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label for="text" class="form-label fw-bold small text-muted mb-0 label-text">输入文本</label>
+                                                <div class="btn-group">
+                                                    <label for="text_file" class="btn btn-xs btn-outline-primary rounded-pill">
+                                                        <i class="fas fa-upload me-1"></i> TXT
+                                                    </label>
+                                                    <input type="file" name="text_file" id="text_file" class="d-none" accept=".txt">
+                                                </div>
+                                            </div>
+                                            <textarea name="text" id="text" class="form-control form-control-lg bg-light border-0" rows="5" placeholder="请输入内容..."></textarea>
+                                        </div>
 
-					<div class="row">
-						<div class="col-md-4">
-							<div class="mb-3">
-								<label for="rate" class="form-label"><i
-										class="fas fa-tachometer-alt me-2"></i>语速：</label>
-								<div class="input-group">
-									<input type="text" name="rate" id="rateLabelif" class="form-control"
-										placeholder="例如: +20% or -10%">
-									<span class="input-group-text">-50% 到 +50%</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="mb-3">
-								<label for="pitch" class="form-label"><i class="fas fa-wave-square me-2"></i>音调：</label>
-								<div class="input-group">
-									<input type="text" name="pitch" id="pitch" class="form-control"
-										placeholder="例如: +20% or -10%">
-									<span class="input-group-text">-50% 到 +50%</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="mb-3">
-								<label for="volume" class="form-label"><i class="fas fa-volume-up me-2"></i>音量：</label>
-								<div class="input-group">
-									<input type="text" name="volume" id="volume" class="form-control"
-										placeholder="例如: +20% or -10%">
-									<span class="input-group-text">-50% 到 +50%</span>
-								</div>
-							</div>
-						</div>
-					</div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-12 col-md-6">
+                                                <label class="form-label small fw-bold text-muted label-filename">文件名</label>
+                                                <input type="text" name="file_name" id="file_name" class="form-control bg-light border-0" placeholder="output" required>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label class="form-label small fw-bold text-muted label-voice">选择语音</label>
+                                                <select name="voice" id="voice" class="form-select bg-light border-0" required>
+                                                    {% for voice_id, voice_name in voiceMap.items() %}
+                                                    <option value="{{ voice_id }}">{{ voice_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
 
-					<div class="mb-3">
-						<label for="ssml" class="form-label"><i class="fas fa-code me-2"></i>SSML（可选）：</label>
-						<textarea name="ssml" id="ssml" class="form-control" rows="4"
-							placeholder="输入SSML代码，留空则使用纯文本"></textarea>
-					</div>
+                                        <div class="accordion mb-4" id="accordionSettings">
+                                            <div class="accordion-item border-0 bg-light rounded-3 overflow-hidden">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed bg-transparent shadow-none py-2 small fw-bold text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdvanced">
+                                                        <i class="fas fa-sliders-h me-2"></i> <span class="label-advanced">高级参数</span>
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseAdvanced" class="accordion-collapse collapse" data-bs-parent="#accordionSettings">
+                                                    <div class="accordion-body pt-0">
+                                                        <div class="row g-3 mt-1">
+                                                            <div class="col-4">
+                                                                <label class="form-label x-small text-muted mb-1 label-rate">语速</label>
+                                                                <input type="text" name="rate" id="rateLabelif" class="form-control form-control-sm" placeholder="+0%">
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <label class="form-label x-small text-muted mb-1 label-pitch">音调</label>
+                                                                <input type="text" name="pitch" id="pitch" class="form-control form-control-sm" placeholder="+0Hz">
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <label class="form-label x-small text-muted mb-1 label-volume">音量</label>
+                                                                <input type="text" name="volume" id="volume" class="form-control form-control-sm" placeholder="+0%">
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <label class="form-label x-small text-muted mb-1">SSML</label>
+                                                                <textarea name="ssml" id="ssml" class="form-control form-control-sm" rows="2" placeholder="<speak>...</speak>"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-					<div class="row">
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="output_format" class="form-label"><i
-										class="fas fa-file-audio me-2"></i>输出格式：</label>
-								<select name="output_format" id="output_format" class="form-select">
-									<option value="mp3">MP3</option>
-									<option value="wav">WAV</option>
-								</select>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="mb-3 d-flex align-items-center h-100">
-								<div class="form-check mt-4">
-									<input type="checkbox" name="generate_subtitles" id="generate_subtitles"
-										class="form-check-input">
-									<label for="generate_subtitles" class="form-check-label"><i
-											class="fas fa-closed-captioning me-2"></i>生成字幕（SRT格式）</label>
-								</div>
-							</div>
-						</div>
-					</div>
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                                            <div class="d-flex gap-3 align-items-center">
+                                                <div class="form-check m-0">
+                                                    <input class="form-check-input" type="radio" name="output_format" id="fmt_mp3" value="mp3" checked>
+                                                    <label class="form-check-label small" for="fmt_mp3">MP3</label>
+                                                </div>
+                                                <div class="form-check m-0">
+                                                    <input class="form-check-input" type="radio" name="output_format" id="fmt_wav" value="wav">
+                                                    <label class="form-check-label small" for="fmt_wav">WAV</label>
+                                                </div>
+                                                <div class="form-check form-switch ms-2">
+                                                    <input class="form-check-input" type="checkbox" name="generate_subtitles" id="generate_subtitles">
+                                                    <label class="form-check-label small label-subtitle" for="generate_subtitles">字幕</label>
+                                                </div>
+                                            </div>
+                                        </div>
 
-					<div class="action-row1">
-						<button type="submit" class="btn btn-primary" id="voice">
-							<i class="fas fa-exchange-alt me-2"></i>生成语音
-						</button>
-						<button type="button" class="btn btn-secondary" onclick="previewAudio()">
-							<i class="fas fa-headphones me-2"></i>预览语音
-						</button>
-					</div>
-				</form>
-			</div>
+                                        <div class="row g-2">
+                                            <div class="col-12 col-md-8">
+                                                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm btn-generate">
+                                                    <i class="fas fa-magic me-2"></i>生成语音
+                                                </button>
+                                            </div>
+                                            <div class="col-12 col-md-4">
+                                                <button type="button" class="btn btn-secondary w-100 py-2 fw-bold btn-preview" onclick="previewAudio()">
+                                                    <i class="fas fa-play me-2"></i>预览
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
 
-			<!-- STT 部分 -->
-			<div class="form-container">
-				<div class="feature-heading">
-					<div class="feature-icon">
-						<i class="fas fa-microphone"></i>
-					</div>
-					<h3 class="mb-0">语音转文字</h3>
-				</div>
-				<form id="stt-form" method="POST" enctype="multipart/form-data" onsubmit="submitSTT(event)">
-					<div class="mb-3">
-						<label for="audio_file" class="form-label"><i class="fas fa-upload me-2"></i>上传音频文件：</label>
-						<input type="file" name="audio_file" id="audio_file" class="form-control" accept=".wav,.mp3"
-							required>
-						<div class="form-text text-muted">支持 WAV、MP3 格式的音频文件（仅限中文语音）</div>
-						<div id="file-error" class="invalid-feedback" style="display: none;">
-							请上传有效的音频文件（支持 .wav 或 .mp3 格式）。
-						</div>
-					</div>
-					<div class="mb-3">
-						<label for="output_file_name" class="form-label"><i
-								class="fas fa-file-alt me-2"></i>输出文件名（不含扩展名）：</label>
-						<input type="text" name="output_file_name" id="output_file_name" class="form-control"
-							placeholder="生成文本文件的名称" required>
-					</div>
-					<div class="action-row2">
-						<button type="submit" class="btn btn-primary">
-							<i class="fas fa-exchange-alt me-2"></i>转换文字
-						</button>
-						<button type="button" class="btn btn-secondary" onclick="clearSTTForm()">
-							<i class="fas fa-trash me-2"></i>清空表单
-						</button>
-					</div>
-				</form>
-			</div>
+                                    <div id="audio-player" class="mt-4 p-3 bg-success-subtle rounded-3 border border-success border-opacity-25" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-success fw-bold m-0"><i class="fas fa-check-circle me-2"></i>完成</h6>
+                                        </div>
+                                        <audio controls id="audio-output" class="w-100 mb-3 custom-audio"></audio>
+                                        <div class="d-flex gap-2">
+                                            <a href="#" id="download-link" class="btn btn-success btn-sm flex-grow-1"><i class="fas fa-download me-1"></i>音频</a>
+                                            <a href="#" id="subtitle-link" class="btn btn-outline-success btn-sm flex-grow-1" style="display: none;"><i class="fas fa-file-alt me-1"></i>字幕</a>
+                                        </div>
+                                    </div>
+                                </div>
 
-			<!-- Console 输出 -->
-			<div id="console-section" class="collapse show">
-    <h3 class="section-title" data-bs-toggle="collapse" data-bs-target="#console-section">
-        <i class="fas fa-terminal me-2"></i>控制台
-    </h3>
-    <div id="console">等待操作...</div>
-</div>
+                                <div class="tab-pane fade" id="pills-stt" role="tabpanel">
+                                    <form id="stt-form" method="POST" enctype="multipart/form-data" onsubmit="submitSTT(event)">
+                                        <div class="upload-area mb-4 p-4 text-center border rounded-3 bg-light position-relative" id="drop-zone">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3 opacity-50"></i>
+                                            <p class="mb-1 fw-bold label-upload-tip">点击或拖拽上传音频</p>
+                                            <p class="text-muted x-small mb-3">支持 WAV, MP3</p>
+                                            
+                                            <input type="file" name="audio_file" id="audio_file" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor: pointer;" accept=".wav,.mp3" required>
+                                            
+                                            <div id="file-info" class="alert alert-primary py-2 px-3 d-none mx-auto d-inline-block">
+                                                <i class="fas fa-file-audio me-2"></i><span id="stt-filename">filename.mp3</span>
+                                            </div>
+                                            <div id="file-error" class="text-danger small mt-2 fw-bold" style="display: none;"></div>
+                                        </div>
 
-			<!-- TTS 结果 -->
-			<div id="audio-player" style="display: none;">
-				<h3 class="section-title"><i class="fas fa-headphones me-2"></i>生成的语音</h3>
-				<audio controls id="audio-output"></audio>
-				<a href="#" id="download-link" class="download-btn"><i class="fas fa-download me-2"></i>下载音频</a>
-				<a href="#" id="subtitle-link" class="download-btn" style="display: none;"><i
-						class="fas fa-closed-captioning me-2"></i>下载字幕</a>
-			</div>
+                                        <div class="mb-4">
+                                            <label class="form-label small fw-bold text-muted label-filename-out">输出文件名</label>
+                                            <input type="text" name="output_file_name" id="output_file_name" class="form-control bg-light border-0" placeholder="result" required>
+                                        </div>
 
-			<!-- STT 结果 -->
-			<div id="stt-result" style="display: none;">
-				<h3 class="section-title"><i class="fas fa-file-alt me-2"></i>转换的文字</h3>
-				<textarea class="form-control" id="stt-output" rows="5" readonly></textarea>
-				<a href="#" id="stt-download-link" class="download-btn"><i class="fas fa-download me-2"></i>下载文本</a>
-			</div>
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm btn-convert">
+                                                <i class="fas fa-language me-2"></i>开始转换
+                                            </button>
+                                            <button type="button" class="btn btn-light py-2 text-muted btn-clear" onclick="clearSTTForm()">
+                                                清空重置
+                                            </button>
+                                        </div>
+                                    </form>
 
-			<footer class="text-center">
-				<p class="mb-0">© 2025 MOML 文字转语音 & 语音转文字工具 | Powered by xAI</p>
-			</footer>
-		</div>
+                                    <div id="stt-result" class="mt-4" style="display: none;">
+                                        <h6 class="text-primary fw-bold mb-2 label-result">转换结果</h6>
+                                        <textarea class="form-control bg-light mb-3" id="stt-output" rows="6" readonly></textarea>
+                                        <a href="#" id="stt-download-link" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-download me-1"></i>保存文本</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-		<script src="./static/js/script.js"></script>
-	</body>
+                    <div class="mt-4">
+                        <button class="btn btn-link text-decoration-none text-muted small p-0 mb-2 w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#console-section">
+                            <i class="fas fa-terminal me-2"></i><span class="label-console">运行日志</span> <i class="fas fa-chevron-down ms-1 x-small"></i>
+                        </button>
+                        <div id="console-section" class="collapse">
+                            <div class="card bg-dark text-light font-monospace border-0 rounded-3 shadow-inner">
+                                <div class="card-body p-3">
+                                    <div id="console" class="text-success x-small" style="height: 120px; overflow-y: auto;">
+                                        [System] Ready...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="text-center mt-5 mb-3 text-muted x-small">
+                        <p class="mb-1">© 2025 MOML Voice Tool</p>
+                        <p class="opacity-50">Powered by xAI</p>
+                    </footer>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./static/js/script.js"></script>
+</body>
 </html>

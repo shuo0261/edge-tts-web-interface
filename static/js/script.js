@@ -1,296 +1,205 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const checkbox = document.getElementById('checkbox');
+document.addEventListener('DOMContentLoaded', function () {
+    const themeBtn = document.getElementById('checkbox');
     const sunDisplay = document.getElementById('sun-display');
     const moonDisplay = document.getElementById('moon-display');
-    const savedLanguage = localStorage.getItem('language') || 'zh';
+    const langBtn = document.getElementById('lang-toggle');
+    const langDisplay = document.getElementById('current-lang-display');
 
-    // 检查本地存储中的主题偏好
+    // 初始化主题
     const currentTheme = localStorage.getItem('theme');
     if (currentTheme === 'dark-mode') {
-        document.body.classList.add('dark-mode');
-        checkbox.style.transform = 'scale(1.5)';
-        sunDisplay.style.display = 'none';
-        moonDisplay.style.display = 'inline';
-		// 切换语言
-        if (savedLanguage === 'zh') {
-            document.getElementById('cn-light').style.display = 'none';
-            document.getElementById('en-light').style.display = 'none';
-            document.getElementById('cn-dark').style.display = 'none';
-            document.getElementById('en-dark').style.display = 'inline';
-        } else {
-            document.getElementById('cn-light').style.display = 'none';
-            document.getElementById('en-light').style.display = 'none';
-            document.getElementById('cn-dark').style.display = 'inline';
-            document.getElementById('en-dark').style.display = 'none';
-        }
+        enableDarkMode();
     } else {
-        document.body.classList.remove('dark-mode');
-        checkbox.style.transform = 'scale(1.5)';
-        sunDisplay.style.display = 'inline';
-        moonDisplay.style.display = 'none';
-		// 切换语言
-        if (savedLanguage === 'zh') {
-            document.getElementById('cn-light').style.display = 'none';
-            document.getElementById('en-light').style.display = 'inline';
-            document.getElementById('cn-dark').style.display = 'none';
-            document.getElementById('en-dark').style.display = 'none';
-        } else {
-            document.getElementById('cn-light').style.display = 'inline';
-            document.getElementById('en-light').style.display = 'none';
-            document.getElementById('cn-dark').style.display = 'none';
-            document.getElementById('en-dark').style.display = 'none';
-        }
+        disableDarkMode();
     }
 
-    checkbox.addEventListener('click', function() {
+    // 主题切换点击事件
+    themeBtn.addEventListener('click', function () {
         if (document.body.classList.contains('dark-mode')) {
-            document.body.classList.remove('dark-mode');
-            localStorage.setItem('theme', 'light-mode');
-            sunDisplay.style.display = 'inline';
-            moonDisplay.style.display = 'none';
-			// 切换语言
-            if (savedLanguage === 'zh') {
-                document.getElementById('cn-light').style.display = 'none';
-                document.getElementById('en-light').style.display = 'inline';
-                document.getElementById('cn-dark').style.display = 'none';
-                document.getElementById('en-dark').style.display = 'none';
-            } else {
-                document.getElementById('cn-light').style.display = 'inline';
-                document.getElementById('en-light').style.display = 'none';
-                document.getElementById('cn-dark').style.display = 'none';
-                document.getElementById('en-dark').style.display = 'none';
-            }
+            disableDarkMode();
         } else {
-            document.body.classList.add('dark-mode');
-            localStorage.setItem('theme', 'dark-mode');
-            sunDisplay.style.display = 'none';
-            moonDisplay.style.display = 'inline';
-			// 切换语言
-            if (savedLanguage === 'zh') {
-                document.getElementById('cn-light').style.display = 'none';
-                document.getElementById('en-light').style.display = 'none';
-                document.getElementById('cn-dark').style.display = 'none';
-                document.getElementById('en-dark').style.display = 'inline';
-            } else {
-                document.getElementById('cn-light').style.display = 'none';
-                document.getElementById('en-light').style.display = 'none';
-                document.getElementById('cn-dark').style.display = 'inline';
-                document.getElementById('en-dark').style.display = 'none';
-            }
+            enableDarkMode();
         }
     });
+
+    function enableDarkMode() {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark-mode');
+        sunDisplay.style.display = 'none';
+        moonDisplay.style.display = 'inline';
+    }
+
+    function disableDarkMode() {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light-mode');
+        sunDisplay.style.display = 'inline';
+        moonDisplay.style.display = 'none';
+    }
+
+    // 语言切换点击事件
+    langBtn.addEventListener('click', function () {
+        const currentLang = localStorage.getItem('language') || 'zh';
+        const newLang = currentLang === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('language', newLang);
+        updateLanguage(newLang);
+    });
+
+    // 文件上传文件名显示逻辑 (STT)
+    const audioInput = document.getElementById('audio_file');
+    const fileInfo = document.getElementById('file-info');
+    const sttFilename = document.getElementById('stt-filename');
+
+    if (audioInput) {
+        audioInput.addEventListener('change', function (e) {
+            if (this.files && this.files.length > 0) {
+                fileInfo.classList.remove('d-none');
+                sttFilename.textContent = this.files[0].name;
+            } else {
+                fileInfo.classList.add('d-none');
+            }
+        });
+    }
 });
-// 语言切换
+
+// 语言包配置
 const translations = {
     zh: {
-        title: '文字转语音 & 语音转文字工具',
-        description: '简单高效的语音与文字转换解决方案',
-        ttsTitle: '文字转语音',
-        sttTitle: '语音转文字',
-        textLabel: '要转换的文字：',
-        textPlaceholder: '请输入要转换为语音的文本内容...',
-        uploadTextLabel: '上传文本文件（可选）：',
-        fileNameLabel: '文件名（不含扩展名）：',
-        fileNamePlaceholder: '生成文件的名称',
-        voiceLabel: '选择语音：',
-        rateLabel: '语速：',
-        pitchLabel: '音调：',
-        volumeLabel: '音量：',
-        rateLabelif:'例如: +20% or -10%',
-        rateLabelif2:'-50% 到 +50%',
-        ssmlLabel: 'SSML（可选）：',
-        ssmlPlaceholder: '输入SSML代码，留空则使用纯文本',
-        outputFormatLabel: '输出格式：',
-        generateSubtitles: '生成字幕（SRT格式）',
-        generateButton: '生成语音',
-        previewButton: '预览语音',
-        uploadAudioLabel: '上传音频文件：',
-        uploadAudioTip: '支持 WAV、MP3 格式的音频文件（仅限中文语音）',
-        outputFileNameLabel: '输出文件名（不含扩展名）：',
-        outputFileNamePlaceholder: '生成文本文件的名称',
-        convertButton: '转换文字',
-        clearButton: '清空表单',
-        consoleTitle: '控制台',
-        consolePlaceholder: '等待操作...',
-        audioTitle: '生成的语音',
-        downloadAudio: '下载音频',
-        downloadSubtitles: '下载字幕',
-        sttResultTitle: '转换的文字',
-        downloadText: '下载文本',
-        footer: '© 2025 MOML 文字转语音 & 语音转文字工具 | Powered by xAI',
-        consoleProcessingTTS: '音频生成中...',
-        consoleProcessingSTT: '转录中...',
-        consoleErrorTTS: '音频生成失败',
-        consoleErrorSTT: '转录失败'
+        title: '语音与文字转换工具',
+        subtitle: '简单、高效、本地化的 AI 语音解决方案',
+        tabTTS: '文字转语音',
+        tabSTT: '语音转文字',
+        labelInput: '输入文本',
+        labelFilename: '文件名',
+        labelVoice: '选择语音',
+        labelRate: '语速',
+        labelPitch: '音调',
+        labelVolume: '音量',
+        labelAdvanced: '高级参数',
+        labelSubtitle: '生成字幕',
+        btnGenerate: '生成语音',
+        btnPreview: '预览',
+        labelUploadTip: '点击 or 拖拽上传音频',
+        labelFilenameOut: '输出文件名',
+        btnConvert: '开始转换',
+        btnClear: '清空重置',
+        labelResult: '转换结果',
+        labelConsole: '运行日志',
+        langCode: 'CN'
     },
     en: {
-        title: 'Text to Speech & Speech to Text Tool',
-        description: 'A simple and efficient solution for converting speech and text',
-        ttsTitle: 'Text to Speech',
-        sttTitle: 'Speech to Text',
-        textLabel: 'Text to convert:',
-        textPlaceholder: 'Please enter the text content to convert to speech...',
-        uploadTextLabel: 'Upload text file (optional):',
-        fileNameLabel: 'File name (without extension):',
-        fileNamePlaceholder: 'Name of the generated file',
-        voiceLabel: 'Select voice:',
-        rateLabel: 'Rate:',
-        pitchLabel: 'Pitch:',
-        volumeLabel: 'Volume:',
-        rateLabelif:'For example: +20% or -10%',
-        rateLabelif2:'-50% to +50%',
-        ssmlLabel: 'SSML (optional):',
-        ssmlPlaceholder: 'Enter SSML code, leave blank to use plain text',
-        outputFormatLabel: 'Output format:',
-        generateSubtitles: 'Generate subtitles (SRT format)',
-        generateButton: 'Generate Speech',
-        previewButton: 'Preview Speech',
-        uploadAudioLabel: 'Upload audio file:',
-        uploadAudioTip: 'Supports WAV, MP3 format audio files (Chinese speech only)',
-        outputFileNameLabel: 'Output file name (without extension):',
-        outputFileNamePlaceholder: 'Name of the generated text file',
-        convertButton: 'Convert to Text',
-        clearButton: 'Clear Form',
-        consoleTitle: 'Console',
-        consolePlaceholder: 'Waiting for operation...',
-        audioTitle: 'Generated Speech',
-        downloadAudio: 'Download Audio',
-        downloadSubtitles: 'Download Subtitles',
-        sttResultTitle: 'Converted Text',
-        downloadText: 'Download Text',
-        footer: '© 2025 MOML Text to Speech & Speech to Text Tool | Powered by xAI',
-        consoleProcessingTTS: 'Generating audio...',
-        consoleProcessingSTT: 'Transcribing...',
-        consoleErrorTTS: 'Audio generation failed',
-        consoleErrorSTT: 'Transcription failed'
+        title: 'Voice & Text Converter',
+        subtitle: 'Simple, efficient, local AI voice solution',
+        tabTTS: 'Text to Speech',
+        tabSTT: 'Speech to Text',
+        labelInput: 'Input Text',
+        labelFilename: 'Filename',
+        labelVoice: 'Select Voice',
+        labelRate: 'Rate',
+        labelPitch: 'Pitch',
+        labelVolume: 'Volume',
+        labelAdvanced: 'Advanced',
+        labelSubtitle: 'Subtitles',
+        btnGenerate: 'Generate',
+        btnPreview: 'Preview',
+        labelUploadTip: 'Click or Drag Audio Here',
+        labelFilenameOut: 'Output Filename',
+        btnConvert: 'Convert',
+        btnClear: 'Reset',
+        labelResult: 'Result',
+        labelConsole: 'Console Log',
+        langCode: 'EN'
     }
 };
 
-// 更新页面文本
 function updateLanguage(lang) {
-    document.querySelector('title').textContent = translations[lang].title;
-    document.querySelector('.header h1').textContent = translations[lang].title;
-    document.querySelector('.header p').textContent = translations[lang].description;
-    document.querySelector('.container .feature-heading1 h3').textContent = translations[lang].ttsTitle;
-    document.querySelector('.container .feature-heading  h3').textContent = translations[lang].sttTitle;
-    document.querySelector('.container label[for="text"]').textContent = translations[lang].textLabel;
-    document.querySelector('.container textarea#text').placeholder = translations[lang].textPlaceholder;
-    document.querySelector('.container label[for="text_file"]').textContent = translations[lang].uploadTextLabel;
-    document.querySelector('.container label[for="file_name"]').textContent = translations[lang].fileNameLabel;
-    document.querySelector('.container input#file_name').placeholder = translations[lang].fileNamePlaceholder;
-    document.querySelector('.container label[for="voice"]').textContent = translations[lang].voiceLabel;
-    document.querySelector('.container label[for="rate"]').textContent = translations[lang].rateLabel;
-    document.querySelector('.container label[for="pitch"]').textContent = translations[lang].pitchLabel;
-    document.querySelector('.container label[for="volume"]').textContent = translations[lang].volumeLabel;
-	document.querySelector('.container input#rateLabelif').textContent = translations[lang].rateLabelif;
-	document.querySelector('.container label[for="ssml"]').textContent = translations[lang].ssmlLabel;
-	document.querySelector('.container textarea#ssml').placeholder = translations[lang].ssmlPlaceholder;
-	document.querySelector('.container label[for="output_format"]').textContent = translations[lang].outputFormatLabel;
-	document.querySelector('.container label[for="generate_subtitles"]').textContent = translations[lang]
-		.generateSubtitles;
-	document.querySelector('.action-row1 button[type="submit"]').textContent = translations[lang]
-		.generateButton;
-    document.querySelector('.container .input-group-text').textContent = translations[lang].rateLabelif2;
-    document.querySelector('.container label[for="ssml"]').textContent = translations[lang].ssmlLabel;
-    document.querySelector('.container textarea#ssml').placeholder = translations[lang].ssmlPlaceholder;
-    document.querySelector('.container label[for="output_format"]').textContent = translations[lang].outputFormatLabel;
-    document.querySelector('.container label[for="generate_subtitles"]').textContent = translations[lang].generateSubtitles;
-    document.querySelector('.action-row1 button[type="submit"]').textContent = translations[lang].generateButton;
-    document.querySelector('.action-row1 button[type="button"]').textContent = translations[lang].previewButton;
-    document.querySelector('.container label[for="audio_file"]').textContent = translations[lang].uploadAudioLabel;
-    document.querySelector('.container .form-text').textContent = translations[lang].uploadAudioTip;
-	document.querySelector('.container label[for="output_file_name"]').textContent = translations[lang]
-		.outputFileNameLabel;
-	document.querySelector('.container input#output_file_name').placeholder = translations[lang]
-		.outputFileNamePlaceholder;
-    document.querySelector('.container label[for="output_file_name"]').textContent = translations[lang].outputFileNameLabel;
-    document.querySelector('.container input#output_file_name').placeholder = translations[lang].outputFileNamePlaceholder;
-    document.querySelector('.action-row2 button[type="submit"]').textContent = translations[lang].convertButton;
-    document.querySelector('.action-row2 button[type="button"]').textContent = translations[lang].clearButton;
-    document.querySelector('#console-section h3').textContent = translations[lang].consoleTitle;
-    document.querySelector('#console').textContent = translations[lang].consolePlaceholder;
-    document.querySelector('#audio-player h3').textContent = translations[lang].audioTitle;
-    document.querySelector('#download-link').textContent = translations[lang].downloadAudio;
-    document.querySelector('#subtitle-link').textContent = translations[lang].downloadSubtitles;
-    document.querySelector('#stt-result h3').textContent = translations[lang].sttResultTitle;
-    document.querySelector('#stt-download-link').textContent = translations[lang].downloadText;
-    document.querySelector('footer p').textContent = translations[lang].footer;
+    const t = translations[lang];
+    document.getElementById('current-lang-display').textContent = t.langCode;
+
+    // 文本更新 (使用 safe querySelector 避免报错)
+    safeSetText('.h3', t.title);
+    safeSetText('.text-muted.small', t.subtitle);
+    safeSetText('#tab-tts-text', t.tabTTS);
+    safeSetText('#tab-stt-text', t.tabSTT);
+    safeSetText('.label-text', t.labelInput);
+    safeSetText('.label-filename', t.labelFilename);
+    safeSetText('.label-voice', t.labelVoice);
+    safeSetText('.label-rate', t.labelRate);
+    safeSetText('.label-pitch', t.labelPitch);
+    safeSetText('.label-volume', t.labelVolume);
+    safeSetText('.label-advanced', t.labelAdvanced);
+    safeSetText('.label-subtitle', t.labelSubtitle);
+
+    // 按钮文字需要保留图标，所以操作 innerHTML
+    const btnGen = document.querySelector('.btn-generate');
+    if (btnGen) btnGen.innerHTML = `<i class="fas fa-magic me-2"></i>${t.btnGenerate}`;
+
+    const btnPre = document.querySelector('.btn-preview');
+    if (btnPre) btnPre.innerHTML = `<i class="fas fa-play me-2"></i>${t.btnPreview}`;
+
+    safeSetText('.label-upload-tip', t.labelUploadTip);
+    safeSetText('.label-filename-out', t.labelFilenameOut);
+
+    const btnConv = document.querySelector('.btn-convert');
+    if (btnConv) btnConv.innerHTML = `<i class="fas fa-language me-2"></i>${t.btnConvert}`;
+
+    safeSetText('.btn-clear', t.btnClear);
+    safeSetText('.label-result', t.labelResult);
+    safeSetText('.label-console', t.labelConsole);
 }
 
-document.getElementById('cn-light').addEventListener('click', function() {
-    localStorage.setItem('language', 'zh');
-    updateLanguage('zh');
-    document.getElementById('cn-light').style.display = 'none';
-    document.getElementById('en-light').style.display = 'inline';
-
-});
-
-document.getElementById('en-light').addEventListener('click', function() {
-    localStorage.setItem('language', 'en');
-    updateLanguage('en');
-    document.getElementById('cn-light').style.display = 'inline';
-    document.getElementById('en-light').style.display = 'none';
-});
-document.getElementById('cn-dark').addEventListener('click', function() {
-    localStorage.setItem('language', 'zh');
-    updateLanguage('zh');
-    document.getElementById('cn-dark').style.display = 'none';
-    document.getElementById('en-dark').style.display = 'inline';
-});
-
-document.getElementById('en-dark').addEventListener('click', function() {
-    localStorage.setItem('language', 'en');
-    updateLanguage('en');
-    document.getElementById('cn-dark').style.display = 'inline';
-    document.getElementById('en-dark').style.display = 'none';
-});
+// 辅助函数：安全设置文本，防止元素不存在报错
+function safeSetText(selector, text) {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = text;
+}
 
 // 初始化语言
 const savedLanguage = localStorage.getItem('language') || 'zh';
 updateLanguage(savedLanguage);
 
-// 原有功能
+/* ================== 下方是原始功能逻辑 (保持不变) ================== */
+
 function submitForm(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const consoleDiv = document.getElementById('console');
-    const consoleSection = document.getElementById('console-section');
-    consoleDiv.innerText = translations[savedLanguage].consoleProcessingTTS;
-    consoleSection.style.display = 'block';
+
+    // 展开控制台
+    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
+
+    consoleDiv.innerText = "Processing TTS...";
     document.getElementById('audio-player').style.display = 'none';
-    document.getElementById('subtitle-link').style.display = 'none';
-    document.getElementById('stt-result').style.display = 'none';
 
     fetch('/', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        consoleDiv.innerText = data.console;
-        if (data.result === "success") {
-            const audioPlayer = document.getElementById('audio-player');
-            const audioOutput = document.getElementById('audio-output');
-            const downloadLink = document.getElementById('download-link');
-            const subtitleLink = document.getElementById('subtitle-link');
-            const url = data.file_url;
+        .then(response => response.json())
+        .then(data => {
+            consoleDiv.innerText = data.console;
+            if (data.result === "success") {
+                const audioPlayer = document.getElementById('audio-player');
+                const audioOutput = document.getElementById('audio-output');
+                const downloadLink = document.getElementById('download-link');
+                const subtitleLink = document.getElementById('subtitle-link');
 
-            audioOutput.src = url;
-            audioPlayer.style.display = 'block';
-            downloadLink.href = url;
-            downloadLink.download = formData.get('file_name') + '.' + formData.get('output_format');
+                audioOutput.src = data.file_url;
+                audioPlayer.style.display = 'block';
+                downloadLink.href = data.file_url;
+                downloadLink.download = formData.get('file_name') + '.' + formData.get('output_format');
 
-            if (data.srt_url) {
-                subtitleLink.href = data.srt_url;
-                subtitleLink.download = formData.get('file_name') + '.srt';
-                subtitleLink.style.display = 'inline-block';
+                if (data.srt_url) {
+                    subtitleLink.href = data.srt_url;
+                    subtitleLink.download = formData.get('file_name') + '.srt';
+                    subtitleLink.style.display = 'inline-block';
+                } else {
+                    subtitleLink.style.display = 'none';
+                }
             }
-        }
-		consoleDiv.innerText = data.console;
-    })
-    .catch(error => {
-        consoleDiv.innerText = `${translations[savedLanguage].consoleErrorTTS}: ${error.message}`;
-    });
+        })
+        .catch(error => {
+            consoleDiv.innerText = `Error: ${error.message}`;
+        });
 }
 
 function previewAudio() {
@@ -302,70 +211,56 @@ function previewAudio() {
     formData.append('output_format', 'mp3');
 
     const consoleDiv = document.getElementById('console');
-    const consoleSection = document.getElementById('console-section');
-    consoleDiv.innerText = translations[savedLanguage].consoleProcessingTTS;
-    consoleSection.style.display = 'block';
+    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
+    consoleDiv.innerText = "Generating preview...";
 
     fetch('/', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        consoleDiv.innerText = data.console;
-        if (data.result === 'success') {
-            const audioPlayer = document.getElementById('audio-player');
-            const audioOutput = document.getElementById('audio-output');
-            const url = data.file_url;
-            audioOutput.src = url;
-            audioPlayer.style.display = 'block';
-        }
-		consoleDiv.innerText = data.console;
-    })
-    .catch(error => {
-        consoleDiv.innerText = `${translations[savedLanguage].consoleErrorTTS}: ${error.message}`;
-    });
+        .then(response => response.json())
+        .then(data => {
+            consoleDiv.innerText = data.console;
+            if (data.result === 'success') {
+                const audioPlayer = document.getElementById('audio-player');
+                const audioOutput = document.getElementById('audio-output');
+                audioOutput.src = data.file_url;
+                audioPlayer.style.display = 'block';
+                audioOutput.play();
+            }
+        })
+        .catch(error => {
+            consoleDiv.innerText = `Error: ${error.message}`;
+        });
 }
 
 function validateAudioFile(file) {
     const validExtensions = ['.wav', '.mp3'];
     const fileName = file.name.toLowerCase();
-    const isValid = validExtensions.some(ext => fileName.endsWith(ext));
-    return isValid;
+    return validExtensions.some(ext => fileName.endsWith(ext));
 }
 
 function submitSTT(event) {
     event.preventDefault();
-
     const audioInput = document.getElementById('audio_file');
     const fileError = document.getElementById('file-error');
     const consoleDiv = document.getElementById('console');
-    const consoleSection = document.getElementById('console-section');
 
-	// 文件验证
     if (!audioInput.files || audioInput.files.length === 0) {
-        fileError.textContent = translations[savedLanguage].consoleErrorSTT;
+        fileError.textContent = "请上传文件";
         fileError.style.display = 'block';
-        audioInput.classList.add('is-invalid');
         return;
     }
 
-    const file = audioInput.files[0];
-    if (!validateAudioFile(file)) {
-        fileError.textContent = translations[savedLanguage].consoleErrorSTT;
+    if (!validateAudioFile(audioInput.files[0])) {
+        fileError.textContent = "格式不支持 (仅限 wav, mp3)";
         fileError.style.display = 'block';
-        audioInput.classList.add('is-invalid');
         return;
     }
 
-	// 清除错误状态
     fileError.style.display = 'none';
-    audioInput.classList.remove('is-invalid');
-
-    consoleDiv.innerText = translations[savedLanguage].consoleProcessingSTT;
-	consoleDiv.innerText = '转录中...';
-    consoleSection.style.display = 'block';
-    document.getElementById('audio-player').style.display = 'none';
+    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
+    consoleDiv.innerText = "Transcribing...";
     document.getElementById('stt-result').style.display = 'none';
 
     const formData = new FormData(event.target);
@@ -373,60 +268,24 @@ function submitSTT(event) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        consoleDiv.innerText = data.console;
-        if (data.result === "success") {
-            const sttResult = document.getElementById('stt-result');
-            const sttOutput = document.getElementById('stt-output');
-            sttOutput.value = data.transcription;
-            sttResult.style.display = 'block';
-        } else {
-            let errorMessage = translations[savedLanguage].consoleErrorSTT;
-            switch (data.message) {
-                case '未上传音频文件':
-                    errorMessage = translations[savedLanguage].consoleErrorSTT;
-                    break;
-                case '文件名为空':
-                    errorMessage = '文件名不能为空！';
-                    break;
-                case '音频转换失败':
-                    errorMessage = '音频转换失败，请检查文件格式是否正确！';
-                    break;
-                case '模型未找到':
-                    errorMessage = 'Vosk 模型未找到，请联系管理员！';
-                    break;
-                case '音频格式错误':
-                    errorMessage = '音频格式错误，必须为单声道 16kHz WAV！';
-                    break;
-                default:
-                    errorMessage = data.message || '未知错误，请查看日志';
+        .then(response => response.json())
+        .then(data => {
+            consoleDiv.innerText = data.console;
+            if (data.result === "success") {
+                document.getElementById('stt-result').style.display = 'block';
+                document.getElementById('stt-output').value = data.transcription;
+            } else {
+                consoleDiv.innerText = `Error: ${data.message}`;
             }
-            consoleDiv.innerText = errorMessage;
-        }
-		consoleDiv.innerText = data.console;
-    })
-    .catch(error => {
-        consoleDiv.innerText = `${translations[savedLanguage].consoleErrorSTT}: ${error.message}`;
-    });
+        })
+        .catch(error => {
+            consoleDiv.innerText = `Error: ${error.message}`;
+        });
 }
 
 function clearSTTForm() {
     document.getElementById('stt-form').reset();
     document.getElementById('stt-result').style.display = 'none';
-    document.getElementById('console').innerText = translations[savedLanguage].consolePlaceholder;
+    document.getElementById('file-info').classList.add('d-none');
+    document.getElementById('console').innerText = "Ready...";
 }
-
-// 监听文件输入变化，实时验证
-document.getElementById('audio_file').addEventListener('change', function() {
-    const fileError = document.getElementById('file-error');
-    const audioInput = this;
-
-    if (audioInput.files.length > 0 && !validateAudioFile(audioInput.files[0])) {
-        fileError.style.display = 'block';
-        audioInput.classList.add('is-invalid');
-    } else {
-        fileError.style.display = 'none';
-        audioInput.classList.remove('is-invalid');
-    }
-});

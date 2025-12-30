@@ -1,430 +1,173 @@
-.hide {
-	display: none;
-}
-
-.show {
-	display: block;
-}
-
-/* 主题切换按钮样式 */
-.theme-switch-wrapper {
-	position: fixed;
-	top: 20px;
-	right: 20px;
-	display: flex;
-	align-items: center;
-	z-index: 1000;
-}
-
-.theme-switch {
-	display: inline-block;
-	height: 34px;
-	position: relative;
-	width: 60px;
-}
-
-.theme-switch input {
-	display: none;
-}
-
-.slider {
-	background-color: #ccc;
-	bottom: 0;
-	cursor: pointer;
-	left: 0;
-	position: absolute;
-	right: 0;
-	top: 0;
-	transition: .4s;
-}
-
-.slider:before {
-	background-color: #fff;
-	bottom: 4px;
-	content: "";
-	height: 26px;
-	left: 4px;
-	position: absolute;
-	transition: .4s;
-	width: 26px;
-}
-
-input:checked+.slider {
-	background-color: #66bb6a;
-}
-
-input:checked+.slider:before {
-	transform: translateX(26px);
-}
-
-.slider.round {
-	border-radius: 34px;
-}
-
-.slider.round:before {
-	border-radius: 50%;
-}
-
-.theme-text {
-	margin-left: 10px;
-	color: var(--text-color);
-}
-
-.theme-icon {
-	margin-left: 10px;
-	font-size: 1.2rem;
-	color: var(--text-color);
-}
-
-body.dark-mode .theme-icon .fa-sun {
-	display: none;
-}
-
-body:not(.dark-mode) .theme-icon .fa-moon {
-	display: none;
-}
-
-/* 语言切换按钮样式 */
-.language-switch-wrapper {
-	position: fixed;
-	top: 20px;
-	right: 200px;
-	/* 调整为 150px，避免重叠 */
-	z-index: 1000;
-}
-
-#language-select {
-	width: 120px;
-}
-
-/* 动画过渡 */
-body {
-	transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-.form-container,
-#console-section,
-#audio-player,
-#stt-result,
-footer,
-body.dark-mode .form-control::file-selector-button,
-body.dark-mode .input-group-text {
-	transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-/* 浅色模式（默认） */
 :root {
-	--primary-color: #4e73df;
-	--secondary-color: #3060d0;
-	--accent-color: #f8f9fc;
-	--text-color: #5a5c69;
-	--success-color: #1cc88a;
-	--card-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	--background-color: #f8f9fc;
-	--card-background: white;
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --input-bg: #f9fafb;
+    --border-color: #e5e7eb;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
 
-/* 深色模式 */
 body.dark-mode {
-	--primary-color: #4e73df;
-	--secondary-color: #3060d0;
-	--accent-color: #2c2c2c;
-	--text-color: #d1d1d1;
-	--success-color: #1cc88a;
-	--card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-	--background-color: #121212;
-	--card-background: #1e1e1e;
+    --primary-color: #818cf8;
+    --primary-hover: #6366f1;
+    --bg-color: #111827;
+    --card-bg: #1f2937;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --input-bg: #374151;
+    --border-color: #4b5563;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
-
-/* 深色模式下文件选择按钮的样式 */
-body.dark-mode .form-control::file-selector-button {
-	background-color: #555;
-	/* 深色背景 */
-	color: #fff;
-	/* 白色文字 */
-	border: 1px solid #555;
-	/* 深色边框 */
-}
-
-/* 深色模式下输入组文本（如 -50% 到 +50%）的样式 */
-body.dark-mode .input-group-text {
-	background-color: #333;
-	/* 深色背景 */
-	color: #fff;
-	/* 白色文字 */
-	border-color: #555;
-	/* 深色边框 */
-}
-
 
 body {
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	background-color: var(--background-color);
-	color: var(--text-color);
-	padding-bottom: 2rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-top: 70px; /* 留出导航栏高度 */
 }
 
-.header {
-	background-color: var(--primary-color);
-	padding: 2rem 0;
-	color: white;
-	margin-bottom: 2rem;
-	border-radius: 0 0 15px 15px;
-	box-shadow: var(--card-shadow);
+/* 导航栏毛玻璃效果 */
+.glass-effect {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-.form-container {
-	background-color: var(--card-background);
-	border-radius: 12px;
-	padding: 2rem;
-	margin-bottom: 2rem;
-	box-shadow: var(--card-shadow);
-	transition: all 0.3s ease;
+body.dark-mode .glass-effect {
+    background-color: rgba(31, 41, 55, 0.85);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.form-container:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+.navbar-brand {
+    color: var(--text-main) !important;
 }
 
-.section-title {
-	color: var(--primary-color);
-	font-size: 1.25rem;
-	margin-bottom: 1rem;
-	font-weight: 600;
-	border-bottom: 2px solid var(--accent-color);
-	padding-bottom: 0.5rem;
+/* 按钮与图标容器 */
+.icon-btn-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--input-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+.icon-btn-wrapper:hover {
+    transform: scale(1.05);
+    background-color: var(--border-color);
 }
 
-.form-control,
-.form-select {
-	border-radius: 8px;
-	padding: 0.75rem;
-	border: 1px solid #e3e6f0;
-	transition: all 0.3s;
+/* 语言显示文字 */
+.lang-text {
+    font-size: 0.8rem;
+    pointer-events: none;
 }
 
-.form-control:focus,
-.form-select:focus {
-	box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
-	border-color: var(--primary-color);
+/* 卡片样式 */
+.main-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
 }
 
-body.dark-mode .form-control,
-body.dark-mode .form-select,
-body.dark-mode textarea,
-body.dark-mode #console {
-	background-color: #333;
-	color: #fff;
-	border-color: #555;
+/* 标签页 */
+.nav-pills .nav-link {
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.nav-pills .nav-link.active {
+    background-color: var(--card-bg);
+    color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+body.dark-mode .nav-pills .nav-link.active {
+    background-color: var(--bg-color);
+    color: #fff;
 }
 
-body.dark-mode .form-control:focus,
-body.dark-mode .form-select:focus,
-body.dark-mode textarea:focus {
-	background-color: #444;
-	color: #fff;
-	border-color: var(--primary-color);
-	box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+/* 表单控件 */
+.form-control, .form-select {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border: 1px solid transparent;
+}
+.form-control:focus, .form-select:focus {
+    background-color: var(--input-bg);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    color: var(--text-main);
+}
+.form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
 }
 
-.btn {
-	border-radius: 8px;
-	padding: 0.75rem 1.5rem;
-	font-weight: 600;
-	transition: all 0.3s;
+/* 上传区域 */
+.upload-area {
+    border: 2px dashed var(--border-color) !important;
+    background-color: var(--input-bg);
+    transition: all 0.3s;
+}
+.upload-area:hover {
+    border-color: var(--primary-color) !important;
+    background-color: rgba(79, 70, 229, 0.05);
 }
 
+/* 字体与排版 */
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-color), #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.text-xs, .x-small {
+    font-size: 0.75rem;
+}
+.btn-xs {
+    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* 按钮 */
 .btn-primary {
-	background-color: var(--primary-color);
-	border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-	background-color: var(--secondary-color);
-	transform: translateY(-2px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-secondary {
-	background-color: #6c757d;
-	border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-	background-color: #5a6268;
-	transform: translateY(-2px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.action-row {
-	display: flex;
-	gap: 1rem;
-	margin-top: 1.5rem;
-}
-
-.form-label {
-	font-weight: 500;
-	margin-bottom: 0.5rem;
-	color: var(--text-color);
-}
-
-#console-section {
-	background-color: var(--card-background);
-	border-radius: 12px;
-	padding: 1rem;
-	margin-bottom: 2rem;
-	border: 1px solid #e3e6f0;
-}
-
-/* #console {
-	background-color: var(--accent-color);
-	border-radius: 8px;
-	padding: 1rem;
-	color: var(--text-color);
-	font-family: monospace;
-	font-size: 0.9rem;
-} */
-
-#console {
-    background-color: var(--accent-color);
-    border-radius: 8px;
-    padding: 1rem;
-    color: var(--text-color);
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    max-height: 200px; /* 固定高度 */
-    overflow-y: auto; /* 添加垂直滚动条 */
-	scrollbar-width: thin; /* 现代浏览器的细滚动条 */
-    scrollbar-color: var(--primary-color) var(--accent-color);
-}
-
-#console::-webkit-scrollbar {
-    width: 8px; /* WebKit 浏览器的滚动条宽度 */
-}
-
-#console::-webkit-scrollbar-thumb {
     background-color: var(--primary-color);
-    border-radius: 4px;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
 }
 
-#console::-webkit-scrollbar-track {
-    background-color: var(--accent-color);
+/* 控制台 */
+#console {
+    font-family: 'Consolas', 'Monaco', monospace;
+    white-space: pre-wrap;
 }
-
-#audio-player,
-#stt-result {
-	background-color: var(--card-background);
-	border-radius: 12px;
-	padding: 1.5rem;
-	margin-bottom: 2rem;
-	box-shadow: var(--card-shadow);
+#console::-webkit-scrollbar {
+    width: 6px;
 }
-
-audio {
-	width: 100%;
-	margin: 1rem 0;
-	border-radius: 30px;
-}
-
-.download-btn {
-	display: inline-block;
-	padding: 0.5rem 1rem;
-	background-color: var(--primary-color);
-	color: white;
-	border-radius: 8px;
-	text-decoration: none;
-	margin: 0.5rem;
-	transition: all 0.3s;
-}
-
-.download-btn:hover {
-	background-color: var(--secondary-color);
-	transform: translateY(-2px);
-	color: white;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.alert {
-	border-radius: 8px;
-	padding: 1rem;
-	margin-bottom: 2rem;
-	font-weight: 500;
-}
-
-.processing {
-	animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-	0% {
-		opacity: 1;
-	}
-
-	50% {
-		opacity: 0.6;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
-footer {
-	background-color: var(--card-background);
-	padding: 1rem;
-	border-radius: 12px;
-	margin-top: 2rem;
-	box-shadow: var(--card-shadow);
-}
-
-h3 {
-	color: var(--primary-color);
-	font-weight: 600;
-	margin-bottom: 1.5rem;
-}
-
-.feature-icon {
-	background-color: var(--primary-color);
-	color: white;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-right: 1rem;
-}
-
-.feature-heading1 {
-	display: flex;
-	align-items: center;
-	margin-bottom: 1.5rem;
-}
-
-.feature-heading {
-	display: flex;
-	align-items: center;
-	margin-bottom: 1.5rem;
-}
-
-/* .form-check-label {
-	user-select: none;
-} */
-
-.form-check-input:checked {
-	background-color: var(--primary-color);
-	border-color: var(--primary-color);
+#console::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 3px;
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-	.action-row {
-		flex-direction: column;
-	}
-
-	.btn {
-		width: 100%;
-		margin-bottom: 0.5rem;
-	}
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .card-body {
+        padding: 1.25rem !important;
+    }
+    .btn-lg {
+        font-size: 1rem;
+    }
 }
