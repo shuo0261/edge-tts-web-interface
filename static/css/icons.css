@@ -1,0 +1,72 @@
+.fas {
+    display: inline-flex;
+    width: 1em;
+    min-width: 1em;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.fa-wave-square::before {
+    content: "~";
+}
+
+.fa-sun::before {
+    content: "☀";
+}
+
+.fa-moon::before {
+    content: "☾";
+}
+
+.fa-play::before {
+    content: "▶";
+}
+
+.fa-microphone::before {
+    content: "♪";
+}
+
+.fa-upload::before,
+.fa-cloud-upload-alt::before {
+    content: "↑";
+}
+
+.fa-sliders-h::before {
+    content: "≡";
+}
+
+.fa-magic::before {
+    content: "✦";
+}
+
+.fa-check-circle::before {
+    content: "✓";
+}
+
+.fa-download::before {
+    content: "↓";
+}
+
+.fa-file-alt::before,
+.fa-file-audio::before {
+    content: "□";
+}
+
+.fa-language::before {
+    content: "A";
+}
+
+.fa-terminal::before {
+    content: ">";
+}
+
+.fa-chevron-down::before {
+    content: "⌄";
+}
+
+.fa-times::before {
+    content: "×";
+}

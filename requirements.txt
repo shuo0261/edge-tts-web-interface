@@ -1,4 +1,4 @@
 Flask>=3.0.0
-edge-tts>=6.1.5
+edge-tts>=7.2.8
 requests>=2.28.0
 vosk>=0.3.45

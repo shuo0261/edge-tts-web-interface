@@ -1,74 +1,18 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const themeBtn = document.getElementById('checkbox');
-    const sunDisplay = document.getElementById('sun-display');
-    const moonDisplay = document.getElementById('moon-display');
-    const langBtn = document.getElementById('lang-toggle');
-    const langDisplay = document.getElementById('current-lang-display');
-
-    // 初始化主题
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'dark-mode') {
-        enableDarkMode();
-    } else {
-        disableDarkMode();
-    }
-
-    // 主题切换点击事件
-    themeBtn.addEventListener('click', function () {
-        if (document.body.classList.contains('dark-mode')) {
-            disableDarkMode();
-        } else {
-            enableDarkMode();
-        }
-    });
-
-    function enableDarkMode() {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark-mode');
-        sunDisplay.style.display = 'none';
-        moonDisplay.style.display = 'inline';
-    }
-
-    function disableDarkMode() {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light-mode');
-        sunDisplay.style.display = 'inline';
-        moonDisplay.style.display = 'none';
-    }
-
-    // 语言切换点击事件
-    langBtn.addEventListener('click', function () {
-        const currentLang = localStorage.getItem('language') || 'zh';
-        const newLang = currentLang === 'zh' ? 'en' : 'zh';
-        localStorage.setItem('language', newLang);
-        updateLanguage(newLang);
-    });
-
-    // 文件上传文件名显示逻辑 (STT)
-    const audioInput = document.getElementById('audio_file');
-    const fileInfo = document.getElementById('file-info');
-    const sttFilename = document.getElementById('stt-filename');
-
-    if (audioInput) {
-        audioInput.addEventListener('change', function (e) {
-            if (this.files && this.files.length > 0) {
-                fileInfo.classList.remove('d-none');
-                sttFilename.textContent = this.files[0].name;
-            } else {
-                fileInfo.classList.add('d-none');
-            }
-        });
-    }
-});
-
-// 语言包配置
 const translations = {
     zh: {
+        metaTitle: '文字转语音 & 语音转文字工具',
+        switchLanguage: '切换语言',
+        toggleTheme: '切换主题',
+        closePlayer: '关闭播放器',
+        eyebrow: '本地语音工作台',
         title: '语音与文字转换工具',
-        subtitle: '简单、高效、本地化的 AI 语音解决方案',
+        subtitle: '输入文字生成语音，也可以上传音频转写文本。',
+        statLabel: '双向转换',
         tabTTS: '文字转语音',
         tabSTT: '语音转文字',
         labelInput: '输入文本',
+        uploadTxt: '上传 TXT',
+        textPlaceholder: '请输入要合成的内容...',
         labelFilename: '文件名',
         labelVoice: '选择语音',
         labelRate: '语速',
@@ -78,97 +22,244 @@ const translations = {
         labelSubtitle: '生成字幕',
         btnGenerate: '生成语音',
         btnPreview: '预览',
-        labelUploadTip: '点击 or 拖拽上传音频',
+        done: '完成',
+        downloadAudio: '下载音频',
+        downloadSubtitle: '下载字幕',
+        labelUploadTip: '点击或拖拽上传音频',
+        supportAudio: '支持 WAV、MP3',
         labelFilenameOut: '输出文件名',
         btnConvert: '开始转换',
         btnClear: '清空重置',
         labelResult: '转换结果',
+        saveText: '保存文本',
+        noAudio: '请先生成语音',
         labelConsole: '运行日志',
-        langCode: 'CN'
+        ready: '[系统] 已就绪...',
+        processingTTS: '正在生成语音...',
+        generatingPreview: '正在生成预览...',
+        transcribing: '正在转写音频...',
+        uploadRequired: '请上传文件',
+        unsupportedFormat: '格式不支持（仅限 WAV、MP3）',
+        langCode: 'CN',
+        htmlLang: 'zh-CN'
     },
     en: {
+        metaTitle: 'Text to Speech & Speech to Text Tool',
+        switchLanguage: 'Switch language',
+        toggleTheme: 'Toggle theme',
+        closePlayer: 'Close player',
+        eyebrow: 'Local voice workspace',
         title: 'Voice & Text Converter',
-        subtitle: 'Simple, efficient, local AI voice solution',
+        subtitle: 'Generate speech from text, or upload audio and transcribe it.',
+        statLabel: 'Two-way conversion',
         tabTTS: 'Text to Speech',
         tabSTT: 'Speech to Text',
         labelInput: 'Input Text',
+        uploadTxt: 'Upload TXT',
+        textPlaceholder: 'Enter the content to synthesize...',
         labelFilename: 'Filename',
         labelVoice: 'Select Voice',
         labelRate: 'Rate',
         labelPitch: 'Pitch',
         labelVolume: 'Volume',
-        labelAdvanced: 'Advanced',
-        labelSubtitle: 'Subtitles',
-        btnGenerate: 'Generate',
+        labelAdvanced: 'Advanced Settings',
+        labelSubtitle: 'Generate subtitles',
+        btnGenerate: 'Generate Speech',
         btnPreview: 'Preview',
-        labelUploadTip: 'Click or Drag Audio Here',
+        done: 'Completed',
+        downloadAudio: 'Download Audio',
+        downloadSubtitle: 'Download Subtitles',
+        labelUploadTip: 'Click or drag audio here',
+        supportAudio: 'Supports WAV and MP3',
         labelFilenameOut: 'Output Filename',
-        btnConvert: 'Convert',
-        btnClear: 'Reset',
-        labelResult: 'Result',
-        labelConsole: 'Console Log',
-        langCode: 'EN'
+        btnConvert: 'Start Conversion',
+        btnClear: 'Clear & Reset',
+        labelResult: 'Transcription Result',
+        saveText: 'Save Text',
+        noAudio: 'Please generate audio first',
+        labelConsole: 'Runtime Log',
+        ready: '[System] Ready...',
+        processingTTS: 'Processing TTS...',
+        generatingPreview: 'Generating preview...',
+        transcribing: 'Transcribing audio...',
+        uploadRequired: 'Please upload a file',
+        unsupportedFormat: 'Unsupported format (WAV and MP3 only)',
+        langCode: 'EN',
+        htmlLang: 'en',
     }
 };
 
+let sttDownloadUrl = null;
+
+function getCurrentLang() {
+    return localStorage.getItem('language') || 'zh';
+}
+
+function t(key) {
+    const lang = getCurrentLang();
+    return translations[lang][key] || translations.zh[key] || key;
+}
+
 function updateLanguage(lang) {
-    const t = translations[lang];
-    document.getElementById('current-lang-display').textContent = t.langCode;
+    const pack = translations[lang] || translations.zh;
+    document.documentElement.lang = pack.htmlLang;
+    document.title = pack.metaTitle;
 
-    // 文本更新 (使用 safe querySelector 避免报错)
-    safeSetText('.h3', t.title);
-    safeSetText('.text-muted.small', t.subtitle);
-    safeSetText('#tab-tts-text', t.tabTTS);
-    safeSetText('#tab-stt-text', t.tabSTT);
-    safeSetText('.label-text', t.labelInput);
-    safeSetText('.label-filename', t.labelFilename);
-    safeSetText('.label-voice', t.labelVoice);
-    safeSetText('.label-rate', t.labelRate);
-    safeSetText('.label-pitch', t.labelPitch);
-    safeSetText('.label-volume', t.labelVolume);
-    safeSetText('.label-advanced', t.labelAdvanced);
-    safeSetText('.label-subtitle', t.labelSubtitle);
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.dataset.i18n;
+        if (pack[key]) el.textContent = pack[key];
+    });
 
-    // 按钮文字需要保留图标，所以操作 innerHTML
-    const btnGen = document.querySelector('.btn-generate');
-    if (btnGen) btnGen.innerHTML = `<i class="fas fa-magic me-2"></i>${t.btnGenerate}`;
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        const key = el.dataset.i18nPlaceholder;
+        if (pack[key]) el.placeholder = pack[key];
+    });
 
-    const btnPre = document.querySelector('.btn-preview');
-    if (btnPre) btnPre.innerHTML = `<i class="fas fa-play me-2"></i>${t.btnPreview}`;
+    document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+        const key = el.dataset.i18nTitle;
+        if (pack[key]) el.title = pack[key];
+    });
 
-    safeSetText('.label-upload-tip', t.labelUploadTip);
-    safeSetText('.label-filename-out', t.labelFilenameOut);
+    const langDisplay = document.getElementById('current-lang-display');
+    if (langDisplay) langDisplay.textContent = pack.langCode;
 
-    const btnConv = document.querySelector('.btn-convert');
-    if (btnConv) btnConv.innerHTML = `<i class="fas fa-language me-2"></i>${t.btnConvert}`;
+    document.querySelectorAll('#voice option').forEach((option) => {
+        const label = option.dataset[`label${lang.charAt(0).toUpperCase()}${lang.slice(1)}`];
+        if (label) option.textContent = label;
+    });
 
-    safeSetText('.btn-clear', t.btnClear);
-    safeSetText('.label-result', t.labelResult);
-    safeSetText('.label-console', t.labelConsole);
+    const consoleDiv = document.getElementById('console');
+    if (consoleDiv && /^\[(System|系统)\]/.test(consoleDiv.innerText.trim())) {
+        consoleDiv.innerText = pack.ready;
+    }
 }
 
-// 辅助函数：安全设置文本，防止元素不存在报错
-function safeSetText(selector, text) {
-    const el = document.querySelector(selector);
-    if (el) el.textContent = text;
+function enableDarkMode() {
+    document.body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark-mode');
+    document.getElementById('sun-display').style.display = 'none';
+    document.getElementById('moon-display').style.display = 'inline';
 }
 
-// 初始化语言
-const savedLanguage = localStorage.getItem('language') || 'zh';
-updateLanguage(savedLanguage);
+function disableDarkMode() {
+    document.body.classList.remove('dark-mode');
+    localStorage.setItem('theme', 'light-mode');
+    document.getElementById('sun-display').style.display = 'inline';
+    document.getElementById('moon-display').style.display = 'none';
+}
 
-/* ================== 下方是原始功能逻辑 (保持不变) ================== */
+document.addEventListener('DOMContentLoaded', function () {
+    const themeBtn = document.getElementById('theme-toggle');
+    const langBtn = document.getElementById('lang-toggle');
+
+    if (localStorage.getItem('theme') === 'dark-mode') {
+        enableDarkMode();
+    } else {
+        disableDarkMode();
+    }
+
+    themeBtn.addEventListener('click', function () {
+        if (document.body.classList.contains('dark-mode')) {
+            disableDarkMode();
+        } else {
+            enableDarkMode();
+        }
+    });
+
+    langBtn.addEventListener('click', function () {
+        const newLang = getCurrentLang() === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('language', newLang);
+        updateLanguage(newLang);
+    });
+
+    const audioInput = document.getElementById('audio_file');
+    const fileInfo = document.getElementById('file-info');
+    const sttFilename = document.getElementById('stt-filename');
+
+    audioInput.addEventListener('change', function () {
+        if (this.files && this.files.length > 0) {
+            fileInfo.classList.remove('d-none');
+            sttFilename.textContent = this.files[0].name;
+        } else {
+            fileInfo.classList.add('d-none');
+        }
+    });
+
+    updateLanguage(getCurrentLang());
+});
+
+function showConsole(message) {
+    const consoleDiv = document.getElementById('console');
+    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
+    consoleDiv.innerText = message;
+    return consoleDiv;
+}
+
+function enableDownload(link, href, filename) {
+    const toolbar = document.getElementById('download-toolbar');
+    link.href = href;
+    link.download = filename;
+    link.classList.remove('disabled');
+    link.removeAttribute('aria-disabled');
+    if (toolbar && link.id === 'download-link') toolbar.classList.add('is-ready');
+}
+
+function disableDownload(link) {
+    const toolbar = document.getElementById('download-toolbar');
+    link.href = '#';
+    link.removeAttribute('download');
+    link.classList.add('disabled');
+    link.setAttribute('aria-disabled', 'true');
+    if (toolbar && link.id === 'download-link') toolbar.classList.remove('is-ready');
+}
+
+function formatDuration(seconds) {
+    if (!Number.isFinite(seconds) || seconds < 0) return '00:00';
+    const totalSeconds = Math.floor(seconds);
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const rest = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${rest}`;
+}
+
+function showAudioPlayer(fileUrl, fileName) {
+    const audioPlayer = document.getElementById('audio-player');
+    const audioOutput = document.getElementById('audio-output');
+    const audioFilename = document.getElementById('audio-filename');
+    const audioDuration = document.getElementById('audio-duration');
+    const playbackUrl = `${fileUrl}${fileUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+
+    audioFilename.textContent = fileName;
+    audioDuration.textContent = '00:00';
+    audioOutput.src = playbackUrl;
+    audioPlayer.style.display = 'block';
+
+    audioOutput.addEventListener('loadedmetadata', function updateDuration() {
+        audioDuration.textContent = formatDuration(audioOutput.duration);
+        audioOutput.removeEventListener('loadedmetadata', updateDuration);
+    });
+
+    return playbackUrl;
+}
+
+function closeAudioPlayer() {
+    const audioPlayer = document.getElementById('audio-player');
+    const audioOutput = document.getElementById('audio-output');
+
+    audioOutput.pause();
+    audioPlayer.style.display = 'none';
+}
 
 function submitForm(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const consoleDiv = document.getElementById('console');
+    const outputFormat = formData.get('output_format') || 'mp3';
+    const fileName = (formData.get('file_name') || '').trim() || 'test';
+    const consoleDiv = showConsole(t('processingTTS'));
 
-    // 展开控制台
-    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
-
-    consoleDiv.innerText = "Processing TTS...";
     document.getElementById('audio-player').style.display = 'none';
+    disableDownload(document.getElementById('download-link'));
+    disableDownload(document.getElementById('subtitle-link'));
+    document.getElementById('subtitle-link').style.display = 'none';
 
     fetch('/', {
         method: 'POST',
@@ -176,25 +267,25 @@ function submitForm(event) {
     })
         .then(response => response.json())
         .then(data => {
-            consoleDiv.innerText = data.console;
-            if (data.result === "success") {
-                const audioPlayer = document.getElementById('audio-player');
-                const audioOutput = document.getElementById('audio-output');
+            consoleDiv.innerText = data.console || data.message || '';
+            if (data.result === 'success') {
                 const downloadLink = document.getElementById('download-link');
                 const subtitleLink = document.getElementById('subtitle-link');
+                const downloadName = `${fileName}.${outputFormat}`;
+                const playbackUrl = showAudioPlayer(data.file_url, downloadName);
 
-                audioOutput.src = data.file_url;
-                audioPlayer.style.display = 'block';
-                downloadLink.href = data.file_url;
-                downloadLink.download = formData.get('file_name') + '.' + formData.get('output_format');
+                enableDownload(downloadLink, playbackUrl, downloadName);
 
                 if (data.srt_url) {
-                    subtitleLink.href = data.srt_url;
-                    subtitleLink.download = formData.get('file_name') + '.srt';
                     subtitleLink.style.display = 'inline-block';
+                    enableDownload(subtitleLink, data.srt_url, `${fileName}.srt`);
                 } else {
                     subtitleLink.style.display = 'none';
+                    disableDownload(subtitleLink);
                 }
+            } else {
+                disableDownload(document.getElementById('download-link'));
+                consoleDiv.innerText = data.message || data.console || 'Error';
             }
         })
         .catch(error => {
@@ -202,36 +293,14 @@ function submitForm(event) {
         });
 }
 
-function previewAudio() {
-    const text = document.getElementById('text').value.slice(0, 50);
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('file_name', 'preview');
-    formData.append('voice', document.getElementById('voice').value);
-    formData.append('output_format', 'mp3');
-
-    const consoleDiv = document.getElementById('console');
-    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
-    consoleDiv.innerText = "Generating preview...";
-
-    fetch('/', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            consoleDiv.innerText = data.console;
-            if (data.result === 'success') {
-                const audioPlayer = document.getElementById('audio-player');
-                const audioOutput = document.getElementById('audio-output');
-                audioOutput.src = data.file_url;
-                audioPlayer.style.display = 'block';
-                audioOutput.play();
-            }
-        })
-        .catch(error => {
-            consoleDiv.innerText = `Error: ${error.message}`;
-        });
+function playCurrentAudio() {
+    const audioOutput = document.getElementById('audio-output');
+    if (!audioOutput.src) {
+        showConsole(t('noAudio'));
+        return;
+    }
+    document.getElementById('audio-player').style.display = 'block';
+    audioOutput.play();
 }
 
 function validateAudioFile(file) {
@@ -244,23 +313,21 @@ function submitSTT(event) {
     event.preventDefault();
     const audioInput = document.getElementById('audio_file');
     const fileError = document.getElementById('file-error');
-    const consoleDiv = document.getElementById('console');
 
     if (!audioInput.files || audioInput.files.length === 0) {
-        fileError.textContent = "请上传文件";
+        fileError.textContent = t('uploadRequired');
         fileError.style.display = 'block';
         return;
     }
 
     if (!validateAudioFile(audioInput.files[0])) {
-        fileError.textContent = "格式不支持 (仅限 wav, mp3)";
+        fileError.textContent = t('unsupportedFormat');
         fileError.style.display = 'block';
         return;
     }
 
     fileError.style.display = 'none';
-    new bootstrap.Collapse(document.getElementById('console-section'), { toggle: false }).show();
-    consoleDiv.innerText = "Transcribing...";
+    const consoleDiv = showConsole(t('transcribing'));
     document.getElementById('stt-result').style.display = 'none';
 
     const formData = new FormData(event.target);
@@ -271,9 +338,18 @@ function submitSTT(event) {
         .then(response => response.json())
         .then(data => {
             consoleDiv.innerText = data.console;
-            if (data.result === "success") {
+            if (data.result === 'success') {
+                const outputName = 'transcription';
+                const sttDownloadLink = document.getElementById('stt-download-link');
+                const textBlob = new Blob([data.transcription], { type: 'text/plain;charset=utf-8' });
+
+                if (sttDownloadUrl) URL.revokeObjectURL(sttDownloadUrl);
+                sttDownloadUrl = URL.createObjectURL(textBlob);
+
                 document.getElementById('stt-result').style.display = 'block';
                 document.getElementById('stt-output').value = data.transcription;
+                sttDownloadLink.href = sttDownloadUrl;
+                sttDownloadLink.download = `${outputName}.txt`;
             } else {
                 consoleDiv.innerText = `Error: ${data.message}`;
             }
@@ -287,5 +363,11 @@ function clearSTTForm() {
     document.getElementById('stt-form').reset();
     document.getElementById('stt-result').style.display = 'none';
     document.getElementById('file-info').classList.add('d-none');
-    document.getElementById('console').innerText = "Ready...";
+    document.getElementById('file-error').style.display = 'none';
+    document.getElementById('console').innerText = t('ready');
+
+    if (sttDownloadUrl) {
+        URL.revokeObjectURL(sttDownloadUrl);
+        sttDownloadUrl = null;
+    }
 }
